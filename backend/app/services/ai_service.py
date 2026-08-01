@@ -42,7 +42,7 @@ def _call_openai(prompt: str, *, model: str = OPENAI_MODEL, max_tokens: int = 30
     try:
         with urllib.request.urlopen(request, timeout=20) as response:
             body = json.loads(response.read().decode("utf-8"))
-    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError):
+    except Exception:
         return None
 
     choices = body.get("choices") or []
