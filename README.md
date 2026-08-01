@@ -13,7 +13,7 @@ Quick start (Docker):
 docker-compose up --build
 ```
 
-3. Frontend available at `http://localhost:5173`, backend at `http://localhost:8000`.
+3. Frontend available at `https://vaat-matrix.vercel.app/`, backend at `https://accesslearn-backend-ac4i.onrender.com/`.
 
 Notes
 - PDF extraction uses PyMuPDF and falls back to pdfplumber + Tesseract for OCR.
