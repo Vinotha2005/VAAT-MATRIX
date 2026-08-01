@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8000'
 const DASHBOARD_CACHE_KEY = 'accesslearn.dashboard.cache'
 const AUTH_TOKEN_KEY = 'accesslearn.auth.token'
 
@@ -22,7 +23,7 @@ function AuthCard({
     setBusy(true)
     setError('')
     try {
-      const res = await axios.post(`http://localhost:8000/auth/${mode}`, { email, password })
+      const res = await axios.post(`${API_BASE}/auth/${mode}`, { email, password })
       const token = res.data.token
       onAuthenticated(token)
     } catch (e: any) {
@@ -66,7 +67,7 @@ function FileUpload({onUploaded}:{onUploaded:(id:number)=>void}){
     if(!file) return
     const fd = new FormData()
     fd.append('file', file)
-    const res = await axios.post('http://localhost:8000/upload/', fd, {headers: {'Content-Type':'multipart/form-data'}})
+    const res = await axios.post(`${API_BASE}/upload/`, fd, {headers: {'Content-Type':'multipart/form-data'}})
     onUploaded(res.data.id)
   }
   return (
@@ -88,13 +89,13 @@ function FileUpload({onUploaded}:{onUploaded:(id:number)=>void}){
 
 function AudioPlayer({src}:{src?:string}){
   if(!src) return null
-  const audioSrc = src.startsWith('http') ? src : `http://localhost:8000${src}`
+  const audioSrc = src.startsWith('http') ? src : `${API_BASE}${src}`
   return (<audio controls src={audioSrc} className="w-full rounded-lg" />)
 }
 
 function MediaLink({label, href}:{label:string; href?:string}){
   if (!href) return <p className="text-sm text-slate-500">Not ready</p>
-  return <a className="inline-flex items-center rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100" href={`http://localhost:8000${href}`} target="_blank" rel="noreferrer">{label}</a>
+  return <a className="inline-flex items-center rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100" href={`${API_BASE}${href}`} target="_blank" rel="noreferrer">{label}</a>
 }
 
 function generateFlashcards(summaryText: string) {
@@ -222,7 +223,7 @@ export default function Dashboard(){
       if (parsed.activeTab) setActiveTab(parsed.activeTab)
 
       if (parsed.docId) {
-        axios.get(`http://localhost:8000/dashboard/${parsed.docId}`)
+        axios.get(`${API_BASE}/dashboard/${parsed.docId}`)
           .then((response) => {
             const nextDashboard = response.data
             const nextSummary = response.data.summary_text || ''
@@ -246,7 +247,7 @@ export default function Dashboard(){
       }
 
       if (parsed.docId && (!Array.isArray(parsed.quiz) || parsed.quiz.length === 0)) {
-        axios.post('http://localhost:8000/generate-quiz/', {document_id: parsed.docId})
+        axios.post(`${API_BASE}/generate-quiz/`, {document_id: parsed.docId})
           .then((response) => {
             const nextQuiz = response.data.quiz || []
             setQuiz(nextQuiz)
@@ -324,12 +325,12 @@ export default function Dashboard(){
     setDocId(id)
     setBusy(true)
     try {
-      await axios.post('http://localhost:8000/extract/', {document_id: id})
-      await axios.post('http://localhost:8000/simplify/', {document_id: id, level: 'beginner'})
-      await axios.post('http://localhost:8000/generate-audio/', {document_id: id})
-      await axios.post('http://localhost:8000/generate-captions/', {document_id: id})
-      const recommendationsRes = await axios.post('http://localhost:8000/generate-video/', {document_id: id})
-      const quizRes = await axios.post('http://localhost:8000/generate-quiz/', {document_id: id})
+      await axios.post(`${API_BASE}/extract/`, {document_id: id})
+      await axios.post(`${API_BASE}/simplify/`, {document_id: id, level: 'beginner'})
+      await axios.post(`${API_BASE}/generate-audio/`, {document_id: id})
+      await axios.post(`${API_BASE}/generate-captions/`, {document_id: id})
+      const recommendationsRes = await axios.post(`${API_BASE}/generate-video/`, {document_id: id})
+      const quizRes = await axios.post(`${API_BASE}/generate-quiz/`, {document_id: id})
       const nextRecommendations = recommendationsRes.data.youtube_recommendations || []
       const nextQuiz = quizRes.data.quiz || []
       setRecommendations(nextRecommendations)
@@ -337,7 +338,7 @@ export default function Dashboard(){
       setQuizAnswers({})
       setQuizSubmitted(false)
       setQuizScore(null)
-      const res = await axios.get(`http://localhost:8000/dashboard/${id}`)
+      const res = await axios.get(`${API_BASE}/dashboard/${id}`)
       const nextDashboard = res.data
       const nextSummary = res.data.summary_text || ''
       setDashboard(nextDashboard)
@@ -352,13 +353,13 @@ export default function Dashboard(){
     if (!docId) return
     setBusy(true)
     try {
-      const res = await axios.post('http://localhost:8000/generate-video/', {document_id: docId})
-      const quizRes = await axios.post('http://localhost:8000/generate-quiz/', {document_id: docId})
+      const res = await axios.post(`${API_BASE}/generate-video/`, {document_id: docId})
+      const quizRes = await axios.post(`${API_BASE}/generate-quiz/`, {document_id: docId})
       const nextRecommendations = res.data.youtube_recommendations || []
       const nextQuiz = quizRes.data.quiz || []
       setRecommendations(nextRecommendations)
       setQuiz(nextQuiz)
-      const dashboardRes = await axios.get(`http://localhost:8000/dashboard/${docId}`)
+      const dashboardRes = await axios.get(`${API_BASE}/dashboard/${docId}`)
       const nextDashboard = dashboardRes.data
       const nextSummary = dashboardRes.data.summary_text || ''
       setDashboard(nextDashboard)

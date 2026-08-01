@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: accesslearn-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: accesslearn-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: grok-beta
+      - key: OPENAI_BASE_URL
+        value: https://api.x.ai/v1
+    healthCheckPath: /
+
+databases:
+  - name: accesslearn-db
+    plan: free
+    databaseName: accesslearn
+    user: accesslearn

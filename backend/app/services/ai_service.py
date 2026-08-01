@@ -5,9 +5,9 @@ import urllib.error
 import urllib.request
 from typing import Any, Dict, Optional
 
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "grok-beta")
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.x.ai/v1")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Set via environment variable
 
 
 def _call_openai(prompt: str, *, model: str = OPENAI_MODEL, max_tokens: int = 300) -> Optional[Dict[str, Any]]:

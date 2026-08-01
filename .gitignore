@@ -21,3 +21,11 @@ uploads/
 # OS/editor
 .DS_Store
 Thumbs.db
+
+# Env files (keep .env.production for Vercel build)
+.env
+.env.local
+.env.development
+
+# Local SQLite DB
+*.db
