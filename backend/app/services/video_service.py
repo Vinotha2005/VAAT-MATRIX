@@ -32,10 +32,7 @@ def _get_spacy_nlp():
     try:
         _SPACY_NLP = spacy.load("en_core_web_sm")
     except Exception:
-        try:
-            _SPACY_NLP = spacy.blank("en")
-        except Exception:
-            return None
+        return None
     return _SPACY_NLP
 
 
