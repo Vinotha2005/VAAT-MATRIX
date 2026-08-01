@@ -446,7 +446,7 @@ export default function Dashboard(){
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 lg:col-span-2">
                     <h2 className="text-lg font-semibold text-slate-800">Voice Summary</h2>
                     <div className="mt-4">
-                      {dashboard.outputs?.audio ? <AudioPlayer src={`http://localhost:8000${dashboard.outputs.audio}`} /> : <p className="text-sm text-slate-500">Not ready</p>}
+                      {dashboard.outputs?.audio ? <AudioPlayer src={`${API_BASE}${dashboard.outputs.audio}`} /> : <p className="text-sm text-slate-500">Not ready</p>}
                     </div>
                     <div className="mt-3"><MediaLink label="Open audio file" href={dashboard.outputs?.audio} /></div>
                   </div>
