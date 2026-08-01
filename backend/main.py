@@ -14,7 +14,7 @@ OUTPUTS_DIR = BASE_DIR / "outputs"
 
 app = FastAPI(title="AccessLearn API")
 SECRET = os.getenv("JWT_SECRET", "replace_this_in_prod")
-PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/auth/login", "/auth/register"}
+PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/auth/login", "/auth/register", "/debug-db"}
 PUBLIC_PREFIXES = ("/files/")
 
 @app.middleware("http")
@@ -68,3 +68,20 @@ def on_startup():
 @app.get("/")
 def root():
     return {"service": "AccessLearn backend running"}
+
+
+@app.get("/debug-db")
+def debug_db():
+    from sqlmodel import Session
+    from app.database import engine
+    from app.models import User, Document, ProcessingJob
+    with Session(engine) as session:
+        users = session.query(User).all()
+        docs = session.query(Document).all()
+        jobs = session.query(ProcessingJob).all()
+    
+    return {
+        "users": [{"id": u.id, "email": u.email, "created_at": str(u.created_at)} for u in users],
+        "documents": [{"id": d.id, "filename": d.filename, "filepath": d.filepath, "owner_id": d.owner_id, "uploaded_at": str(d.uploaded_at), "processed": d.processed} for d in docs],
+        "processing_jobs": [{"id": j.id, "document_id": j.document_id, "status": j.status, "result_path": j.result_path, "created_at": str(j.created_at), "updated_at": str(j.updated_at)} for j in jobs]
+    }
