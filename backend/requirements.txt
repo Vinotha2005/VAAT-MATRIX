@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+psycopg2-binary
+python-multipart
+PyMuPDF
+pdfplumber
+pytesseract
+Pillow
+gTTS
+PyJWT
+spacy
